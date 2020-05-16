@@ -65,7 +65,7 @@ class Board(object):
             generator: Generator of Territories.
         """
         neighbor_ids = risk.definitions.territory_neighbors[territory_id]
-        return (t for t in self.data if t.territory_id in neighbor_ids)
+        return neighbor_ids
 
     def hostile_neighbors(self, territory_id):
         """
@@ -78,9 +78,13 @@ class Board(object):
         Returns:
             generator: Generator of Territories.
         """
+        hostile_neighbors=[]
         player_id = self.owner(territory_id)
         neighbor_ids = risk.definitions.territory_neighbors[territory_id]
-        return (t for t in self.data if (t.player_id != player_id and t.territory_id in neighbor_ids))
+        for neighbor in neighbor_ids:
+            if self.owner(neighbor) != player_id:
+                hostile_neighbors.append(neighbor)
+        return hostile_neighbors
 
     def friendly_neighbors(self, territory_id):
         """
@@ -93,9 +97,13 @@ class Board(object):
         Returns:
             generator: Generator of tuples of the form (territory_id, player_id, armies).
         """
+        friendly_neighbors = []
         player_id = self.owner(territory_id)
         neighbor_ids = risk.definitions.territory_neighbors[territory_id]
-        return (t for t in self.data if (t.player_id == player_id and t.territory_id in neighbor_ids))
+        for neighbor in neighbor_ids:
+            if self.owner(neighbor) == player_id:
+                friendly_neighbors.append(neighbor)
+        return friendly_neighbors
 
     
     # ================== #
